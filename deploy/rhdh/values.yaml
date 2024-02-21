@@ -10,11 +10,50 @@ global:
     # Every item defines the plugin `package` as a [NPM package spec](https://docs.npmjs.com/cli/v10/using-npm/package-spec),
     # an optional `pluginConfig` with plugin-specific backstage configuration, and an optional `disabled` flag to disable/enable a plugin
     # listed in `includes` files. It also includes an `integrity` field that is used to verify the plugin package [integrity](https://w3c.github.io/webappsec-subresource-integrity/#integrity-metadata-description).
-    plugins: []
-  # -- Shorthand for users who do not want to specify a custom HOSTNAME. Used ONLY with the DEFAULT upstream.backstage.appConfig value and with OCP Route enabled.
-  clusterRouterBase: apps.example.com
+    plugins:
+    - package: ./dynamic-plugins/dist/immobiliarelabs-backstage-plugin-gitlab-backend-dynamic
+      disabled: false
+    - package: ./dynamic-plugins/dist/immobiliarelabs-backstage-plugin-gitlab
+      disabled: false
+    - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-gitlab-dynamic
+      disabled: false 
+    - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-gitlab-dynamic
+      disabled: false
+    - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
+      disabled: false
+    - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes
+      disabled: false
+    - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-argo-cd-backend-dynamic
+      disabled: false
+    - package: ./dynamic-plugins/dist/roadiehq-scaffolder-backend-argocd-dynamic
+      disabled: false
+    - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-argo-cd
+      disabled: false
+    - package: ./dynamic-plugins/dist/backstage-plugin-sonarqube-backend-dynamic
+      disabled: false
+    - package: ./dynamic-plugins/dist/backstage-plugin-sonarqube
+      disabled: false
+    - package: ./dynamic-plugins/dist/backstage-plugin-techdocs-backend-dynamic
+      disabled: false
+    - package: ./dynamic-plugins/dist/backstage-plugin-techdocs
+      disabled: false
+    - package: ./dynamic-plugins/dist/janus-idp-backstage-scaffolder-backend-module-servicenow-dynamic
+      disabled: false
+    - package: ./dynamic-plugins/dist/janus-idp-backstage-scaffolder-backend-module-sonarqube-dynamic
+      disabled: false
+    - package: ./dynamic-plugins/dist/janus-idp-backstage-plugin-aap-backend-dynamic
+      disabled: false
+    - package: ./dynamic-plugins/dist/janus-idp-backstage-plugin-quay
+      disabled: false
+    - package: ./dynamic-plugins/dist/janus-idp-backstage-plugin-jfrog-artifactory
+      disabled: false
+    - package: ./dynamic-plugins/dist/backstage-plugin-pagerduty
+      disabled: false
+
+  # -- setting this to empty string since we are installing developer hub on EKS
+  clusterRouterBase: ""
   # -- Custom hostname shorthand, overrides `global.clusterRouterBase`, `upstream.ingress.host`, `route.host`, and url values in `upstream.backstage.appConfig`
-  host: ""
+  host: "developer-hub.sandbox182.opentlc.com"
   # -- Enable service authentication within Backstage instance
   auth:
     # -- Backend service to service authentication
@@ -32,13 +71,12 @@ upstream:
   nameOverride: developer-hub
   backstage:
     image:
-      registry: quay.io
+      registry: registry.redhat.io
       repository: rhdh/rhdh-hub-rhel9
       tag: 1.0-200
       # Tag is set via prepare.sh script
       # tag: "${RHDH_RELEASE}-${TARGET_RHDH_TAG}"
-      pullSecrets:
-        - rhdh-pull-secret
+      pullPolicy: Always
     command: []
     # FIXME (tumido): USE POSTGRES_PASSWORD and POSTGRES_USER instead of POSTGRES_ADMIN_PASSWORD
     # This is a hack. In {fedora,rhel}/postgresql images, regular user is forbidden
@@ -62,6 +100,9 @@ upstream:
         auth:
           keys:
             - secret: ${BACKEND_SECRET}
+    extraAppConfig:
+    - configMapRef: "developer-hub-appconfig"
+      filename: "developer-hub-appconfig.yaml"     
     readinessProbe:
       failureThreshold: 3
       httpGet:
@@ -156,6 +197,10 @@ upstream:
     podAnnotations:
       checksum/dynamic-plugins: >-
         {{- include "common.tplvalues.render" ( dict "value" .Values.global.dynamic "context" $) | sha256sum }}
+    podSecurityContext:
+      runAsUser: 1001
+      runAsGroup: 1001
+      fsGroup: 1001
   postgresql:
     enabled: true
     postgresqlDataDir: /var/lib/pgsql/data/userdata
@@ -163,13 +208,18 @@ upstream:
       registry: registry.redhat.io
       repository: rhel9/postgresql-15
       tag: latest
+      pullPolicy: Always
+      imagePullSecrets:
+        - rhdh-pull-secret
     auth:
       secretKeys:
         adminPasswordKey: postgres-password
         userPasswordKey: password
     primary:
       podSecurityContext:
-        enabled: false
+        enabled: true
+        fsGroup: 26
+        runAsUser: 26
       containerSecurityContext:
         enabled: false
       persistence:
@@ -182,38 +232,13 @@ upstream:
             secretKeyRef:
               key: postgres-password
               name: '{{- include "postgresql.v1.secretName" . }}'
+    volumePermissions:
+      enabled: true
   ingress:
     enabled: true
     host: "{{ .Values.global.host }}"
+    className: haproxy
 # -- OpenShift Route parameters
 route:
-  # -- Route specific annotations
-  annotations: {}
-  # -- Enable the creation of the route resource
+  # -- disable route creation since we are installing developer-hub on EKS and using Ingress mechanism instead
   enabled: false
-  # -- Set the host attribute to a custom value. If not set, OpenShift will generate it, please make sure to match your baseUrl
-  host: "{{ .Values.global.host }}"
-  # -- Path that the router watches for, to route traffic for to the service.
-  path: "/"
-  # -- Wildcard policy if any for the route. Currently only 'Subdomain' or 'None' is allowed.
-  wildcardPolicy: None
-  # -- Route TLS parameters
-  # <br /> Ref: https://docs.openshift.com/container-platform/4.9/networking/routes/secured-routes.html
-  tls:
-    # -- Enable TLS configuration for the host defined at `route.host` parameter
-    enabled: true
-    # -- Specify TLS termination.
-    termination: "edge"
-    # -- Certificate contents
-    certificate: ""
-    # -- Key file contents
-    key: ""
-    # -- Cert authority certificate contents. Optional
-    caCertificate: ""
-    # -- Contents of the ca certificate of the final destination.
-    # <br /> When using reencrypt termination this file should be provided in order to have routers use it for health checks on the secure connection. If this field is not specified, the router may provide its own destination CA and perform hostname validation using the short service name (service.namespace.svc), which allows infrastructure generated certificates to automatically verify.
-    destinationCACertificate: ""
-    # --  Indicates the desired behavior for insecure connections to a route.
-    # <br /> While each router may make its own decisions on which ports to expose, this is normally port 80. The only valid values are None, Redirect, or empty for disabled.
-    insecureEdgeTerminationPolicy: "Redirect"
-

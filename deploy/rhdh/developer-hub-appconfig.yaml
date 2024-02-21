@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "developer-hub-appconfig"
+  namespace: tools
+data:
+  developer-hub-appconfig.yaml: |
+    auth:
+      environment: demo
+      providers:
+        okta:
+          demo:
+            clientId: ${AUTH_OKTA_CLIENT_ID}
+            clientSecret: ${AUTH_OKTA_CLIENT_SECRET}
+            audience: ${AUTH_OKTA_DOMAIN}
+            authServerId: ${AUTH_OKTA_AUTH_SERVER_ID} # Optional
+            idp: ${AUTH_OKTA_IDP}
+            # https://developer.okta.com/docs/reference/api/oidc/#scope-dependent-claims-not-always-returned
+            additionalScopes: ${AUTH_OKTA_ADDITIONAL_SCOPES}
+            
+    integrations:
+      gitlab:
+      - host: gitlab.com
+        apps:
+        - appId: ${GITLAB_APP_APP_ID}
+          clientId: ${GITLAB_APP_CLIENT_ID}
+          clientSecret: ${GITLAB_APP_CLIENT_SECRET}
+          webhookUrl: ${GITLAB_APP_WEBHOOK_URL}
+          webhookSecret: ${GITLAB_APP_WEBHOOK_SECRET}
+          privateKey: |
+            ${GITLAB_APP_PRIVATE_KEY}
+

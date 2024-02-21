@@ -63,5 +63,5 @@ helm show values openshift-helm-charts/redhat-developer-hub > values.yaml
 Install the Helm Chart
 
 ```
-helm upgrade -i <release_name> -f values.yaml openshift-helm-charts/redhat-developer-hub
+helm upgrade --namespace developer-hub -i developer-hub -f values.yaml openshift-helm-charts/redhat-developer-hub
 ```
