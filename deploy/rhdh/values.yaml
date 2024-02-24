@@ -11,45 +11,10 @@ global:
     # an optional `pluginConfig` with plugin-specific backstage configuration, and an optional `disabled` flag to disable/enable a plugin
     # listed in `includes` files. It also includes an `integrity` field that is used to verify the plugin package [integrity](https://w3c.github.io/webappsec-subresource-integrity/#integrity-metadata-description).
     plugins:
-    - package: ./dynamic-plugins/dist/immobiliarelabs-backstage-plugin-gitlab-backend-dynamic
-      disabled: false
-    - package: ./dynamic-plugins/dist/immobiliarelabs-backstage-plugin-gitlab
-      disabled: false
-    - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-gitlab-dynamic
-      disabled: false 
-    - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-gitlab-dynamic
-      disabled: false
-    - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
-      disabled: false
-    - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes
-      disabled: false
-    - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-argo-cd-backend-dynamic
-      disabled: false
-    - package: ./dynamic-plugins/dist/roadiehq-scaffolder-backend-argocd-dynamic
-      disabled: false
-    - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-argo-cd
-      disabled: false
-    - package: ./dynamic-plugins/dist/backstage-plugin-sonarqube-backend-dynamic
-      disabled: false
-    - package: ./dynamic-plugins/dist/backstage-plugin-sonarqube
-      disabled: false
-    - package: ./dynamic-plugins/dist/backstage-plugin-techdocs-backend-dynamic
-      disabled: false
     - package: ./dynamic-plugins/dist/backstage-plugin-techdocs
       disabled: false
-    - package: ./dynamic-plugins/dist/janus-idp-backstage-scaffolder-backend-module-servicenow-dynamic
+    - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-gitlab-dynamic
       disabled: false
-    - package: ./dynamic-plugins/dist/janus-idp-backstage-scaffolder-backend-module-sonarqube-dynamic
-      disabled: false
-    - package: ./dynamic-plugins/dist/janus-idp-backstage-plugin-aap-backend-dynamic
-      disabled: false
-    - package: ./dynamic-plugins/dist/janus-idp-backstage-plugin-quay
-      disabled: false
-    - package: ./dynamic-plugins/dist/janus-idp-backstage-plugin-jfrog-artifactory
-      disabled: false
-    - package: ./dynamic-plugins/dist/backstage-plugin-pagerduty
-      disabled: false
-
   # -- setting this to empty string since we are installing developer hub on EKS
   clusterRouterBase: ""
   # -- Custom hostname shorthand, overrides `global.clusterRouterBase`, `upstream.ingress.host`, `route.host`, and url values in `upstream.backstage.appConfig`
@@ -76,7 +41,7 @@ upstream:
       tag: 1.0-200
       # Tag is set via prepare.sh script
       # tag: "${RHDH_RELEASE}-${TARGET_RHDH_TAG}"
-      pullPolicy: Always
+      pullPolicy: IfNotPresent
     command: []
     # FIXME (tumido): USE POSTGRES_PASSWORD and POSTGRES_USER instead of POSTGRES_ADMIN_PASSWORD
     # This is a hack. In {fedora,rhel}/postgresql images, regular user is forbidden
@@ -153,7 +118,7 @@ upstream:
               resources:
                 requests:
                   # -- Size of the volume that will contain the dynamic plugins. It should be large enough to contain all the plugins.
-                  storage: 1Gi
+                  storage: 5Gi
       # Volume that will expose the `dynamic-plugins.yaml` file from the `dynamic-plugins` config map.
       # The `dynamic-plugins` config map is created by the helm chart from the content of the `global.dynamic` field.
       - name: dynamic-plugins
@@ -201,6 +166,8 @@ upstream:
       runAsUser: 1001
       runAsGroup: 1001
       fsGroup: 1001
+    extraEnvVarsSecrets:
+    - rhdh-secrets
   postgresql:
     enabled: true
     postgresqlDataDir: /var/lib/pgsql/data/userdata
@@ -208,7 +175,7 @@ upstream:
       registry: registry.redhat.io
       repository: rhel9/postgresql-15
       tag: latest
-      pullPolicy: Always
+      pullPolicy: IfNotPresent
       imagePullSecrets:
         - rhdh-pull-secret
     auth:
@@ -224,7 +191,7 @@ upstream:
         enabled: false
       persistence:
         enabled: true
-        size: 1Gi
+        size: 5Gi
         mountPath: /var/lib/pgsql/data
       extraEnvVars:
         - name: POSTGRESQL_ADMIN_PASSWORD

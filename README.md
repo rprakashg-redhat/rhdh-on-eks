@@ -42,11 +42,14 @@ Lets now create a red hat pull secret from the downloaded `pull-secret.txt` file
 
 ```
 kubectl create secret generic rhdh-pull-secret \
-  -n developer-hub \
+  -n tools \
   --from-file=.dockerconfigjson=pull-secret.txt \
   --type=kubernetes.io/dockerconfigjson
 
 ```
+
+## Create required secrets and app config configmap
+
 
 ## Installing Red Hat Developer Hub
 
@@ -63,5 +66,6 @@ helm show values openshift-helm-charts/redhat-developer-hub > values.yaml
 Install the Helm Chart
 
 ```
-helm upgrade --namespace developer-hub -i developer-hub -f values.yaml openshift-helm-charts/redhat-developer-hub
+helm upgrade --namespace tools -i developer-hub -f values.yaml openshift-helm-charts/redhat-developer-hub
 ```
+
