@@ -13,7 +13,7 @@ global:
     plugins:
     - package: ./dynamic-plugins/dist/backstage-plugin-techdocs
       disabled: false
-    - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-gitlab-dynamic
+    - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-dynamic
       disabled: false
   # -- setting this to empty string since we are installing developer hub on EKS
   clusterRouterBase: ""
@@ -168,6 +168,7 @@ upstream:
       fsGroup: 1001
     extraEnvVarsSecrets:
     - rhdh-secrets
+    - gh-app-key
   postgresql:
     enabled: true
     postgresqlDataDir: /var/lib/pgsql/data/userdata

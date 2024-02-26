@@ -5,33 +5,39 @@ metadata:
   namespace: tools
 data:
   developer-hub-appconfig.yaml: |
-    signInPage: gitlab
+    signInPage: github
     auth:
       environment: demo
       providers:
-        gitlab:
+        github:
           demo:
-            clientId: ${GITLAP_APP_CLIENT_ID}
-            clientSecret: ${GITLAB_APP_CLIENT_SECRET}
-            audience: https://gitlab.com
-            callbackUrl: https://${BASE_URL}/api/auth/gitlab/handler/frame
+            clientId: ${GITHUB_APP_CLIENT_ID}
+            clientSecret: ${GITHUB_APP_CLIENT_SECRET}
     
     integrations:
-      gitlab:
-      - host: gitlab.com
+      github:
+      - host: github.com
         apps:
-        - appId: ${GITLAB_APP_ID}
-          clientId: ${GITLAP_APP_CLIENT_ID}
-          clientSecret: ${GITLAB_APP_CLIENT_SECRET}
+        - appId: ${GITHUB_APP_APP_ID}
+          clientId: ${GITHUB_APP_CLIENT_ID}
+          clientSecret: ${GITHUB_APP_CLIENT_SECRET}
+          webhookUrl: ${GITHUB_APP_WEBHOOK_URL}
+          webhookSecret: ${GITHUB_APP_WEBHOOK_SECRET}
+          privateKey: |
+            ${GITHUB_APP_PRIVATE_KEY}
     
     catalog:
       providers:
-        gitlab:
-          demo:
-            host: gitlab.com
-            group: rprakashg-redhat
-            branch: main
-            skipForkedRepos: true
-            schedule:
-              frequency: { minutes: 30 }
-              timeout: { minutes: 3 }
+        github:
+          organization: ${GITHUB_ORG}
+          catalogPath: '/catalog-info.yaml' # string
+          filters:
+            branch: 'main' # string
+            repository: '.*' # Regex
+          schedule:
+            frequency:
+              minutes: 30
+            initialDelay:
+              seconds: 15
+            timeout:
+              minutes: 3
