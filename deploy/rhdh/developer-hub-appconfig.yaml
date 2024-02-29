@@ -31,14 +31,12 @@ data:
       rules:
         - allow: [Component, System, API, Group, User, Resource, Location, Template]
       locations:
-      - type: url
-        target: https://github.com/rprakashg-redhat/demo-rhdh-templates/blob/main/templates.yaml
-        rules:
-          - allow: [Location]
+        - type: url
+          target: https://github.com/rprakashg-redhat/rhdh-templates/blob/main/all-templates.yaml
       providers:
         github:
           organization: ${GITHUB_ORG}
-          catalogPath: 'catalog-info.yaml' # string
+          catalogPath: '/catalog-info.yaml' # string
           filters:
             branch: 'main' # string
             repository: '.*' # Regex
