@@ -29,17 +29,14 @@ data:
     
     catalog:
       import:
-        entityFileName: '/catalog-info.yaml'
-      
+        entityFileName: catalog-info.yaml
       rules:
       - allow [Component, System, API, Group, User, Resource, Location, Template]
-      
       locations:
       - type: url
         target: https://github.com/rprakashg-redhat/demo-rhdh-templates
         rules:
         - allow: [Template]
-
       providers:
         github:
           organization: ${GITHUB_ORG}
