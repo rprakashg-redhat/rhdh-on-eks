@@ -13,7 +13,6 @@ data:
           demo:
             clientId: ${GITHUB_APP_CLIENT_ID}
             clientSecret: ${GITHUB_APP_CLIENT_SECRET}
-    
     integrations:
       github:
       - host: github.com
@@ -26,21 +25,20 @@ data:
           webhookSecret: ${GITHUB_APP_WEBHOOK_SECRET}
           privateKey: |
             ${GITHUB_APP_PRIVATE_KEY}
-    
     catalog:
       import:
         entityFileName: catalog-info.yaml
       rules:
-      - allow [Component, System, API, Group, User, Resource, Location, Template]
+        - allow: [Component, System, API, Group, User, Resource, Location, Template]
       locations:
       - type: url
-        target: https://github.com/rprakashg-redhat/demo-rhdh-templates
+        target: https://github.com/rprakashg-redhat/demo-rhdh-templates/blob/main/templates.yaml
         rules:
-        - allow: [Template]
+          - allow: [Location]
       providers:
         github:
           organization: ${GITHUB_ORG}
-          catalogPath: '/catalog-info.yaml' # string
+          catalogPath: 'catalog-info.yaml' # string
           filters:
             branch: 'main' # string
             repository: '.*' # Regex

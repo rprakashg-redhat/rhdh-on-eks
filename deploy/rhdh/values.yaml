@@ -15,6 +15,8 @@ global:
       disabled: false
     - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-dynamic
       disabled: false
+    #- package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-org-dynamic
+    #  disabled: false
   # -- setting this to empty string since we are installing developer hub on EKS
   clusterRouterBase: ""
   # -- Custom hostname shorthand, overrides `global.clusterRouterBase`, `upstream.ingress.host`, `route.host`, and url values in `upstream.backstage.appConfig`
