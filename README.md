@@ -79,6 +79,13 @@ kubectl create secret generic -n tools gh-app-key \
 --from-file=GITHUB_APP_PRIVATE_KEY="/Users/rgopinat/keys/demo-rhdh.2024-02-26.private-key.pem"
 ```
 
+Create developer hub app config configmap. You can find the app config configmap I used here
+https://github.com/rprakashg-redhat/rhdh-on-eks/blob/main/deploy/rhdh/developer-hub-appconfig.yaml
+
+```
+kubectl apply -f deploy/rhdh/developer-hub-appconfig.yaml
+```
+
 ## Installing Red Hat Developer Hub
 
 ```
