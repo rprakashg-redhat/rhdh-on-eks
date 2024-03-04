@@ -5,6 +5,14 @@ metadata:
   namespace: tools
 data:
   developer-hub-appconfig.yaml: |
+    techdocs:
+      generator:
+        mkdocs:
+          defaultPlugins: ['techdocs-core']
+      builder: 'external'
+      publisher:
+        type: 'external'
+
     signInPage: github
     auth:
       environment: demo
