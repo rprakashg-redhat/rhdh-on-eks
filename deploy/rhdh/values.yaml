@@ -11,6 +11,8 @@ global:
     # an optional `pluginConfig` with plugin-specific backstage configuration, and an optional `disabled` flag to disable/enable a plugin
     # listed in `includes` files. It also includes an `integrity` field that is used to verify the plugin package [integrity](https://w3c.github.io/webappsec-subresource-integrity/#integrity-metadata-description).
     plugins:
+    - package: ./dynamic-plugins/dist/janus-idp-backstage-plugin-topology
+      disabled: false
     - package: ./dynamic-plugins/dist/backstage-plugin-github-actions
       disabled: false
     - package: ./dynamic-plugins/dist/backstage-plugin-github-issues
@@ -30,7 +32,7 @@ global:
   # -- setting this to empty string since we are installing developer hub on EKS
   clusterRouterBase: ""
   # -- Custom hostname shorthand, overrides `global.clusterRouterBase`, `upstream.ingress.host`, `route.host`, and url values in `upstream.backstage.appConfig`
-  host: "developer-hub.sandbox182.opentlc.com"
+  host: "developer-hub.sandbox2114.opentlc.com"
   # -- Enable service authentication within Backstage instance
   auth:
     # -- Backend service to service authentication

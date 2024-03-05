@@ -29,12 +29,47 @@ helm install haproxy-kubernetes-ingress haproxytech/kubernetes-ingress \
   --namespace haproxy-controller \
   --set controller.service.type=LoadBalancer
 ```
+Check if load balancer provisioned successfully in AWS. 
+
+```
+kubectl describe service haproxy-ingress -n haproxy-controller
+```
+If External IP is in pending status then delete the service and recreate
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: haproxy-ingress
+  name: haproxy-ingress
+  namespace: haproxy-controller
+spec:
+  selector:
+    run: haproxy-ingress
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  - name: stat
+    port: 1024
+    protocol: TCP
+    targetPort: 1024
+EOF   
+```
 
 ## create namespace 
 Create a `tools` namespace on the EKS cluster to install Red Hat developer hub
 
 ```
-kubectl create namespace developer-hub
+kubectl create namespace tools
 ```
 
 ## Create red hat pull secret

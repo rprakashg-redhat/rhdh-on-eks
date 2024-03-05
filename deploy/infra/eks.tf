@@ -19,6 +19,7 @@ module "eks" {
         create_security_group = false
     }
 
+    # This is to prevent from having issues provisioning Service Type Loadbalancer
     node_security_group_tags = {
         "kubernetes.io/cluster/${var.name}" = null
     }
@@ -29,9 +30,9 @@ module "eks" {
 
             instance_types = ["m5.2xlarge"]
 
-            min_size     = 2
-            max_size     = 3
-            desired_size = 2
+            min_size     = 3
+            max_size     = 5
+            desired_size = 3
 
             pre_bootstrap_user_data = <<-EOT
             echo 'foo bar'
