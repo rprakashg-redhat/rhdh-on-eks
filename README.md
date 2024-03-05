@@ -80,7 +80,6 @@ kubectl create secret generic rhdh-pull-secret \
   -n tools \
   --from-file=.dockerconfigjson=pull-secret.txt \
   --type=kubernetes.io/dockerconfigjson
-
 ```
 
 ## Create required secrets and app config configmap
