@@ -51,6 +51,11 @@ kubectl create secret generic rhdh-pull-secret \
   --from-file=.dockerconfigjson=pull-secret.txt \
   --type=kubernetes.io/dockerconfigjson
 ```
+Patch the  default service account to be able to pull images from redhat registries
+
+```
+kubectl patch sa default -n tools -p '{"imagePullSecrets": [{"name": "rhdh-pull-secret"}]}'
+```
 
 ## Create required secrets and app config configmap
 
