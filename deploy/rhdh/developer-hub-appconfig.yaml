@@ -7,12 +7,21 @@ data:
   developer-hub-appconfig.yaml: |
     techdocs:
       generator:
+        runIn: local
         mkdocs:
           defaultPlugins: ['techdocs-core']
-      builder: 'external'
+      builder: 'local'
       publisher:
-        type: 'external'
-
+        type: 'awsS3'
+      awsS3:
+        bucketName: 'techdocs-devhub'
+        bucketRootPath: '/'
+        accountId: ${TECHDOCS_AWSS3_ACCOUNT_ID}
+        credentials:
+          accessKeyId: ${TECHDOCS_AWSS3_ACCESS_KEY_ID}
+          secretAccessKey: ${TECHDOCS_AWSS3_SECRET_ACCESS_KEY}
+        region: ${AWS_REGION}
+        sse: 'aws:kms'
     signInPage: github
     auth:
       environment: demo
