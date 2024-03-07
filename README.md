@@ -115,3 +115,37 @@ Install the Helm Chart
 helm upgrade --namespace tools -i developer-hub -f values.yaml openshift-helm-charts/redhat-developer-hub
 ```
 
+
+
+TechDocs
+
+AWS S3 policy that grants permission to publish to bucket
+
+```
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "ListObjectsInBucket",
+			"Effect": "Allow",
+			"Action": [
+				"s3:ListBucket",
+				"s3:DeleteObjectVersion",
+				"s3:PutObjectAcl"
+			],
+			"Resource": [
+				"arn:aws:s3:::techdocs-devhub"
+			]
+		},
+		{
+			"Sid": "AllObjectActions",
+			"Effect": "Allow",
+			"Action": "s3:*Object",
+			"Resource": [
+				"arn:aws:s3:::techdocs-devhub/*"
+			]
+		}
+	]
+}
+```
+
