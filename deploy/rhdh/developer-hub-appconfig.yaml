@@ -16,8 +16,8 @@ data:
       clusterLocatorMethods:
         - type: 'config'
           clusters:
-          - url: https://kubernetes.default.svc
-            name: local
+          - url: ${EKS_CLUSTER_URL}
+            name: eks
             serviceAccountToken: ${SA_TOKEN}
             authProvider: 'serviceAccount'
     techdocs:
@@ -61,6 +61,7 @@ data:
     catalog:
       import:
         entityFileName: catalog-info.yaml
+        pullRequestBranchName: backstage-integration
       rules:
         - allow: [Component, System, API, Group, User, Resource, Location, Template]
       locations:
@@ -84,3 +85,5 @@ data:
               seconds: 15
             timeout:
               minutes: 3
+    permission:
+      enabled: true
