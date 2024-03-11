@@ -70,7 +70,7 @@ Create secrets used in app config for Red Hat developer hub instance. I was play
 --from-literal=AUTH_OKTA_ADDITIONAL_SCOPES=${AUTH_OKTA_ADDITIONAL_SCOPES} \
 --from-literal=GITLAB_TOKEN=${GITLAB_TOKEN} \
 --from-literal=GITLAB_APP_APP_ID=${GITLAB_APP_APP_ID} \
---from-literal=GITLAP_APP_CLIENT_ID=${GITLAP_APP_CLIENT_ID} \
+--from-literal=GITLAB_APP_CLIENT_ID=${GITLAB_APP_CLIENT_ID} \
 --from-literal=GITLAB_APP_CLIENT_SECRET=${GITLAB_APP_CLIENT_SECRET} \
 --from-literal=GITHUB_APP_APP_ID=${GITHUB_APP_APP_ID} \
 --from-literal=GITHUB_APP_CLIENT_ID=${GITHUB_APP_CLIENT_ID} \
@@ -78,7 +78,13 @@ Create secrets used in app config for Red Hat developer hub instance. I was play
 --from-literal=GITHUB_ORG=${GITHUB_ORG} \
 --from-literal=GITHUB_APP_WEBHOOK_URL=${GITHUB_APP_WEBHOOK_URL} \
 --from-literal=GITHUB_APP_WEBHOOK_SECRET=${GITHUB_APP_WEBHOOK_SECRET} \
---from-literal=GITHUB_TOKEN=${GITHUB_TOKEN}
+--from-literal=GITHUB_TOKEN=${GITHUB_TOKEN} \
+--from-literal=TECHDOCS_AWSS3_ACCOUNT_ID=${TECHDOCS_AWSS3_ACCOUNT_ID} \
+--from-literal=AWS_ACCESS_KEY_ID=${TECHDOCS_AWS_ACCESS_KEY_ID} \
+--from-literal=AWS_SECRET_ACCESS_KEY=${TECHDOCS_AWS_SECRET_ACCESS_KEY} \
+--from-literal=TECHDOCS_AWSS3_BUCKET_NAME=${TECHDOCS_AWSS3_BUCKET_NAME} \
+--from-literal=TECHDOCS_AWSS3_BUCKET_URL=${TECHDOCS_AWSS3_BUCKET_URL} \
+--from-literal=SA_TOKEN=${SA_TOKEN}
 ```
 
 Create secret from Github private key that was downloaded when you created the app in github
@@ -149,3 +155,72 @@ AWS S3 policy that grants permission to publish to bucket
 }
 ```
 
+Kubernetes plugin configuration
+
+Create a readonly role for backstage
+
+```
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: backstage-read-only
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - pods
+      - configmaps
+      - services
+      - deployments
+      - replicasets
+      - horizontalpodautoscalers
+      - ingresses
+      - statefulsets
+      - limitranges
+      - resourcequotas
+      - daemonsets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+      - cronjobs
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - metrics.k8s.io
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+EOF
+```
+
+Create a service account
+
+```
+kubectl create serviceaccount devhub-sa -n tools
+```
+
+Create a secret for service account token
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: devhub-sa-token
+  namespace: tools
+  annotations:
+    kubernetes.io/service-account.name: devhub-sa
+type: kubernetes.io/service-account-token
+EOF
+```

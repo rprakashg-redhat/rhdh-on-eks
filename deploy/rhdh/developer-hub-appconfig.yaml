@@ -5,23 +5,32 @@ metadata:
   namespace: tools
 data:
   developer-hub-appconfig.yaml: |
+    kubernetes:
+      serviceLocatorMethod: 'multiTenant'
+      clusterLocatorMethods:
+      - 'config'
+      clusters:
+      - url: https://kubernetes.default.svc
+        name: local
+        serviceAccountToken: ${SA_TOKEN}
+        authProvider: 'serviceAccount'
     techdocs:
       generator:
-        #runIn: local
+        runIn: local
         mkdocs:
           defaultPlugins: ['techdocs-core']
       builder: 'external'
       publisher:
-        type: 'external' #'awsS3'
-        #awsS3:
-        #  bucketName: 'techdocs-devhub'
-        #  bucketRootPath: '/'
-        #  accountId: ${TECHDOCS_AWSS3_ACCOUNT_ID}
-        #  credentials:
-        #    accessKeyId: ${TECHDOCS_AWSS3_ACCESS_KEY_ID}
-        #    secretAccessKey: ${TECHDOCS_AWSS3_SECRET_ACCESS_KEY}
-        #  region: ${AWS_REGION}
-        #  sse: 'aws:kms'
+        type: 'awsS3'
+        awsS3:
+          bucketName: ${TECHDOCS_AWSS3_BUCKET_NAME}
+          endPoint: ${TECHDOCS_AWSS3_BUCKET_URL}
+          bucketRootPath: '/'
+          accountId: ${TECHDOCS_AWSS3_ACCOUNT_ID}
+          credentials:
+            accessKeyId: ${AWS_ACCESS_KEY_ID}
+            secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
+          sse: 'aws:kms'
     signInPage: github
     auth:
       environment: demo
