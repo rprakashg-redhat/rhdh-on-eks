@@ -5,6 +5,9 @@ metadata:
   namespace: tools
 data:
   developer-hub-appconfig.yaml: |
+    enabled:
+      github: true
+      #githubOrg: true
     organization:
       name: Demo org
     kubernetes:
@@ -64,6 +67,10 @@ data:
         - type: url
           target: https://github.com/rprakashg-redhat/rhdh-templates/blob/main/all-templates.yaml
       providers:
+        #githubOrg:
+        #  default:
+        #    id: development
+        #    orgUrl: ${GITHUB_ORG_URL}
         github:
           organization: ${GITHUB_ORG}
           catalogPath: '/catalog-info.yaml' # string
