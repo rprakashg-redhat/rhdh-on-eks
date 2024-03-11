@@ -5,15 +5,18 @@ metadata:
   namespace: tools
 data:
   developer-hub-appconfig.yaml: |
+    organization:
+      name: Demo org
     kubernetes:
-      serviceLocatorMethod: 'multiTenant'
+      serviceLocatorMethod: 
+        type: 'multiTenant'
       clusterLocatorMethods:
-      - 'config'
-      clusters:
-      - url: https://kubernetes.default.svc
-        name: local
-        serviceAccountToken: ${SA_TOKEN}
-        authProvider: 'serviceAccount'
+        - type: 'config'
+          clusters:
+          - url: https://kubernetes.default.svc
+            name: local
+            serviceAccountToken: ${SA_TOKEN}
+            authProvider: 'serviceAccount'
     techdocs:
       generator:
         runIn: local
@@ -30,6 +33,7 @@ data:
           credentials:
             accessKeyId: ${AWS_ACCESS_KEY_ID}
             secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
+          region: ${AWS_REGION}
           sse: 'aws:kms'
     signInPage: github
     auth:
