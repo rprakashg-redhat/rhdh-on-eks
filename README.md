@@ -84,7 +84,10 @@ Create secrets used in app config for Red Hat developer hub instance. I was play
 --from-literal=AWS_SECRET_ACCESS_KEY=${TECHDOCS_AWS_SECRET_ACCESS_KEY} \
 --from-literal=TECHDOCS_AWSS3_BUCKET_NAME=${TECHDOCS_AWSS3_BUCKET_NAME} \
 --from-literal=TECHDOCS_AWSS3_BUCKET_URL=${TECHDOCS_AWSS3_BUCKET_URL} \
---from-literal=SA_TOKEN=${SA_TOKEN}
+--from-literal=AWS_REGION=${AWS_REGION} \
+--from-literal=EKS_CLUSTER_URL=${EKS_CLUSTER_URL} \
+--from-literal=EKS_CLUSTER_NAME=${EKS_CLUSTER_NAME} \
+--from-literal=EKS_ROLE_ARN_TO_ASSUME=${EKS_ROLE_ARN_TO_ASSUME}
 ```
 
 Create secret from Github private key that was downloaded when you created the app in github
@@ -157,70 +160,15 @@ AWS S3 policy that grants permission to publish to bucket
 
 Kubernetes plugin configuration
 
-Create a readonly role for backstage
+Download the EKS CA certificate from console and save to a file and create a kubernetes secret
 
 ```
-cat <<EOF | kubectl apply -f -
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: backstage-read-only
-rules:
-  - apiGroups:
-      - '*'
-    resources:
-      - pods
-      - configmaps
-      - services
-      - deployments
-      - replicasets
-      - horizontalpodautoscalers
-      - ingresses
-      - statefulsets
-      - limitranges
-      - resourcequotas
-      - daemonsets
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - batch
-    resources:
-      - jobs
-      - cronjobs
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - metrics.k8s.io
-    resources:
-      - pods
-    verbs:
-      - get
-      - list
-EOF
+kubectl create secret generic -n tools eks-ca-data \
+--from-file=EKS_CA_DATA=eks-ca.txt
 ```
 
-Create a service account
+Get the control plane endpoint by running command below or from AWS console and set it in local.env file as EKS_CLUSTER_URL
 
 ```
-kubectl create serviceaccount devhub-sa -n tools
-```
-
-Create a secret for service account token
-
-```
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Secret
-metadata:
-  name: devhub-sa-token
-  namespace: tools
-  annotations:
-    kubernetes.io/service-account.name: devhub-sa
-type: kubernetes.io/service-account-token
-EOF
+kubectl cluster-info
 ```

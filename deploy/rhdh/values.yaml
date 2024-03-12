@@ -191,6 +191,7 @@ upstream:
     extraEnvVarsSecrets:
     - rhdh-secrets
     - gh-app-key
+    - eks-ca-data
   postgresql:
     enabled: true
     postgresqlDataDir: /var/lib/pgsql/data/userdata

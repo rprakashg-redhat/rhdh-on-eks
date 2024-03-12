@@ -13,15 +13,15 @@ data:
       clusterLocatorMethods:
         - type: 'config'
           clusters:
-          - url: https://kubernetes.default.svc
-            name: local
-            title: 'local cluster'
-            serviceAccountToken: ${SA_TOKEN}
-            authProvider: 'serviceAccount'
-            skipTLSVerify: true
-            skipMetricsLookup: true
-            #caData: ${K8S_CONFIG_CA_DATA}
-            #caFile: ""
+          - url: ${EKS_CLUSTER_URL}
+            name: eks
+            title: 'eks cluster'
+            authProvider: 'aws'
+            caData: ${EKS_CA_DATA}
+            authMetadata:
+              kubernetes.io/aws-assume-role: ${EKS_ROLE_ARN_TO_ASSUME}
+              #kubernetes.io/aws-external-id: ${EXTERNAL_ID} commenting this out since cluster is in the same account where backstage is running
+              kubernetes.io/x-k8s-aws-id: ${EKS_CLUSTER_NAME}
     techdocs:
       generator:
         runIn: local
