@@ -57,7 +57,7 @@ data:
             ${GITHUB_APP_PRIVATE_KEY}
     catalog:
       import:
-        entityFileName: catalog-info.yaml
+        entityFileName: 'catalog-info.yaml'
       rules:
         - allow: [Component, System, API, Group, User, Resource, Location, Template]
       locations:
