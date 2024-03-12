@@ -58,7 +58,6 @@ data:
     catalog:
       import:
         entityFileName: catalog-info.yaml
-        pullRequestBranchName: backstage-integration
       rules:
         - allow: [Component, System, API, Group, User, Resource, Location, Template]
       locations:
