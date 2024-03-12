@@ -5,6 +5,8 @@ metadata:
   namespace: tools
 data:
   developer-hub-appconfig.yaml: |
+    enabled:
+      github: true
     organization:
       name: Demo org
     kubernetes:
@@ -77,3 +79,5 @@ data:
               seconds: 15
             timeout:
               minutes: 3
+    permission:
+      enabled: true
