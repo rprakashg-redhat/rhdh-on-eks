@@ -13,10 +13,15 @@ data:
       clusterLocatorMethods:
         - type: 'config'
           clusters:
-          - url: ${EKS_CLUSTER_URL}
-            name: eks
+          - url: https://kubernetes.default.svc
+            name: local
+            title: 'local cluster'
             serviceAccountToken: ${SA_TOKEN}
             authProvider: 'serviceAccount'
+            skipTLSVerify: true
+            skipMetricsLookup: true
+            #caData: ${K8S_CONFIG_CA_DATA}
+            #caFile: ""
     techdocs:
       generator:
         runIn: local
