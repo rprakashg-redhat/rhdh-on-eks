@@ -77,5 +77,3 @@ data:
               seconds: 15
             timeout:
               minutes: 3
-    permission:
-      enabled: true
