@@ -5,6 +5,8 @@ metadata:
   namespace: tools
 data:
   developer-hub-appconfig.yaml: |
+    enabled:
+      github: true
     organization:
       name: Demo org
     kubernetes:
@@ -59,10 +61,14 @@ data:
       import:
         entityFileName: catalog-info.yaml
       rules:
-        - allow: [Component, System, API, Group, User, Resource, Location, Template]
+        - allow: [Component, System, API, Resource, Location, Domain]
       locations:
         - type: url
           target: https://github.com/rprakashg-redhat/rhdh-templates/blob/main/all-templates.yaml
+        - type: github-org
+          target: https://github.com/${GITHUB_ORG}
+          rules:
+            - allow: [User, Group]
       providers:
         github:
           organization: ${GITHUB_ORG}
