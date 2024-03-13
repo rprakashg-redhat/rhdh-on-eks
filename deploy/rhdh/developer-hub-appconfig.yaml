@@ -7,6 +7,10 @@ data:
   developer-hub-appconfig.yaml: |
     organization:
       name: Demo org
+    aws:
+      mainAccount:
+        accessKeyId: ${AWS_ACCESS_KEY_ID}
+        secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
     kubernetes:
       serviceLocatorMethod:
         type: 'multiTenant'
