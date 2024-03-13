@@ -68,6 +68,8 @@ data:
       locations:
         - type: url
           target: https://github.com/rprakashg-redhat/rhdh-templates/blob/main/all-templates.yaml
+        - type: url
+          target: https://github.com/rprakashg-redhat/apis/blob/main/all-apis.yaml
         #- type: github-org
         #  target: https://github.com/${GITHUB_ORG}
         #  rules:
