@@ -8,8 +8,14 @@ data:
     organization:
       name: Demo org
     aws:
-      accountDefaults:
-        roleName: ${EKS_ROLE_ARN_TO_ASSUME}
+      mainAccount:
+        accessKeyId: ${AWS_ACCESS_KEY_ID}
+        secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
+      accounts:
+        - accountId: ${TECHDOCS_AWSS3_ACCOUNT_ID}
+          roleName: ${EKS_ROLE_ARN_TO_ASSUME}
+          externalId: ${AWS_EXTERNAL_ID}
+          region: ${AWS_REGION}
     kubernetes:
       serviceLocatorMethod:
         type: 'multiTenant'
@@ -22,8 +28,6 @@ data:
             authProvider: 'aws'
             caData: ${EKS_CA_DATA}
             authMetadata:
-              kubernetes.io/aws-assume-role: ${EKS_ROLE_ARN_TO_ASSUME}
-              kubernetes.io/aws-external-id: ${AWS_EXTERNAL_ID}
               kubernetes.io/x-k8s-aws-id: ${EKS_CLUSTER_NAME}
     techdocs:
       generator:
