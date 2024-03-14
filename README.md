@@ -217,6 +217,22 @@ rules:
     verbs:
       - get
       - list
+  - apiGroups: 
+      - tekton.dev
+    resources: 
+      - tasks
+      - clustertasks 
+      - taskruns 
+      - pipelines
+      - pipelineruns
+      - customruns"
+      - stepactions
+    verbs: ["get", "list", "watch"]
+  - apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+    verbs: ["get", "list", "watch"] 
 EOF
 ```
 
@@ -271,4 +287,34 @@ Update the trust policy on EKS cluster to grant assume role
 		}
 	}
 }
+```
+
+Installing ArgoCD
+
+Create Ingress Resource
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd
+  namespace: gitops
+spec:
+  ingressClassName: haproxy
+  rules:
+  - host: gitops.sandbox2841.opentlc.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: argocd-server
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - gitops.sandbox2841.opentlc.com
+EOF
 ```
