@@ -87,8 +87,11 @@ Create secrets used in app config for Red Hat developer hub instance. I was play
 --from-literal=AWS_REGION=${AWS_REGION} \
 --from-literal=EKS_CLUSTER_URL=${EKS_CLUSTER_URL} \
 --from-literal=EKS_CLUSTER_NAME=${EKS_CLUSTER_NAME} \
---from-literal=EKS_ROLE_ARN_TO_ASSUME=${EKS_ROLE_ARN_TO_ASSUME} \
---from-literal=AWS_EXTERNAL_ID=${AWS_EXTERNAL_ID}
+--from-literal=BACKSTAGE_ROLE_ARN_TO_ASSUME=${BACKSTAGE_ROLE_ARN_TO_ASSUME} \
+--from-literal=AWS_EXTERNAL_ID=${AWS_EXTERNAL_ID} \
+--from-literal=EKS_SA_TOKEN=${EKS_SA_TOKEN} \
+--from-literal=ARGOCD_USER_ID=${ARGOCD_USER_ID} \
+--from-literal=ARGOCD_USER_PWD=${ARGOCD_USER_PWD}
 ```
 
 Create secret from Github private key that was downloaded when you created the app in github
@@ -287,34 +290,4 @@ Update the trust policy on EKS cluster to grant assume role
 		}
 	}
 }
-```
-
-Installing ArgoCD
-
-Create Ingress Resource
-
-```
-cat <<EOF | kubectl apply -f -
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: argocd
-  namespace: gitops
-spec:
-  ingressClassName: haproxy
-  rules:
-  - host: gitops.sandbox2841.opentlc.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: argocd-server
-            port:
-              number: 80
-        path: /
-        pathType: Prefix
-  tls:
-  - hosts:
-    - gitops.sandbox2841.opentlc.com
-EOF
 ```

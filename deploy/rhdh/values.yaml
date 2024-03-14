@@ -33,10 +33,10 @@ global:
       disabled: false
     - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
       disabled: false
-    #- package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-argo-cd
-    #  disabled: false
-    #- package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-argo-cd-backend-dynamic
-    #  disabled: false
+    - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-argo-cd
+      disabled: false
+    - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-argo-cd-backend-dynamic
+      disabled: false
   # -- setting this to empty string since we are installing developer hub on EKS
   clusterRouterBase: ""
   # -- Custom hostname shorthand, overrides `global.clusterRouterBase`, `upstream.ingress.host`, `route.host`, and url values in `upstream.backstage.appConfig`
