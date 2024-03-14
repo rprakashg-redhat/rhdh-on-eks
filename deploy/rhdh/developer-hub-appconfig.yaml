@@ -5,17 +5,20 @@ metadata:
   namespace: tools
 data:
   developer-hub-appconfig.yaml: |
+    enabled:
+      argocd: false
+      github: true
+      githubOrg: false
+      gitlab: false
+      jenkins: false
+      keycloak: false
+      kubernetes: true
+      ocm: false
+      permission: false
+      sonarqube: false
+      techdocs: true
     organization:
       name: Demo org
-    aws:
-      mainAccount:
-        accessKeyId: ${AWS_ACCESS_KEY_ID}
-        secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
-      accounts:
-        - accountId: ${TECHDOCS_AWSS3_ACCOUNT_ID}
-          roleName: ${EKS_ROLE_ARN_TO_ASSUME}
-          externalId: ${AWS_EXTERNAL_ID}
-          region: ${AWS_REGION}
     kubernetes:
       serviceLocatorMethod:
         type: 'multiTenant'
@@ -24,11 +27,9 @@ data:
           clusters:
           - url: ${EKS_CLUSTER_URL}
             name: eks
-            title: 'eks cluster'
-            authProvider: 'aws'
+            authProvider: 'serviceaccount'
             caData: ${EKS_CA_DATA}
-            authMetadata:
-              kubernetes.io/x-k8s-aws-id: ${EKS_CLUSTER_NAME}
+            serviceAccountToken: ${EKS_SA_TOKEN}
     techdocs:
       generator:
         runIn: local
@@ -41,12 +42,12 @@ data:
           bucketName: ${TECHDOCS_AWSS3_BUCKET_NAME}
           endPoint: ${TECHDOCS_AWSS3_BUCKET_URL}
           bucketRootPath: '/'
-          accountId: ${TECHDOCS_AWSS3_ACCOUNT_ID}
+          accountId: ${BACKSTAGE_AWS_ACCOUNT_ID}
           credentials:
             accessKeyId: ${AWS_ACCESS_KEY_ID}
             secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
           region: ${AWS_REGION}
-          sse: 'aws:kms'
+          s3ForcePathStyle: true
     signInPage: github
     auth:
       environment: demo

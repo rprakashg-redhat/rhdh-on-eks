@@ -79,15 +79,16 @@ Create secrets used in app config for Red Hat developer hub instance. I was play
 --from-literal=GITHUB_APP_WEBHOOK_URL=${GITHUB_APP_WEBHOOK_URL} \
 --from-literal=GITHUB_APP_WEBHOOK_SECRET=${GITHUB_APP_WEBHOOK_SECRET} \
 --from-literal=GITHUB_TOKEN=${GITHUB_TOKEN} \
---from-literal=TECHDOCS_AWSS3_ACCOUNT_ID=${TECHDOCS_AWSS3_ACCOUNT_ID} \
---from-literal=AWS_ACCESS_KEY_ID=${TECHDOCS_AWS_ACCESS_KEY_ID} \
---from-literal=AWS_SECRET_ACCESS_KEY=${TECHDOCS_AWS_SECRET_ACCESS_KEY} \
+--from-literal=BACKSTAGE_AWS_ACCOUNT_ID=${BACKSTAGE_AWS_ACCOUNT_ID} \
+--from-literal=AWS_ACCESS_KEY_ID=${BACKSTAGE_AWS_ACCESS_KEY_ID} \
+--from-literal=AWS_SECRET_ACCESS_KEY=${BACKSTAGE_AWS_SECRET_ACCESS_KEY} \
 --from-literal=TECHDOCS_AWSS3_BUCKET_NAME=${TECHDOCS_AWSS3_BUCKET_NAME} \
 --from-literal=TECHDOCS_AWSS3_BUCKET_URL=${TECHDOCS_AWSS3_BUCKET_URL} \
 --from-literal=AWS_REGION=${AWS_REGION} \
 --from-literal=EKS_CLUSTER_URL=${EKS_CLUSTER_URL} \
 --from-literal=EKS_CLUSTER_NAME=${EKS_CLUSTER_NAME} \
---from-literal=EKS_ROLE_ARN_TO_ASSUME=${EKS_ROLE_ARN_TO_ASSUME}
+--from-literal=EKS_ROLE_ARN_TO_ASSUME=${EKS_ROLE_ARN_TO_ASSUME} \
+--from-literal=AWS_EXTERNAL_ID=${AWS_EXTERNAL_ID}
 ```
 
 Create secret from Github private key that was downloaded when you created the app in github
@@ -173,6 +174,72 @@ Get the control plane endpoint by running command below or from AWS console and 
 kubectl cluster-info
 ```
 
+Create a readonly cluster role
+```
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: backstage-read-only
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - pods
+      - configmaps
+      - services
+      - deployments
+      - replicasets
+      - horizontalpodautoscalers
+      - ingresses
+      - statefulsets
+      - limitranges
+      - resourcequotas
+      - daemonsets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+      - cronjobs
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - metrics.k8s.io
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+EOF
+```
+
+Bind the readonly role to service account
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: backstage-read-only
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: backstage-read-only
+subjects:
+- kind: ServiceAccount
+  name: devhub-sa
+  namespace: tools
+EOF
+
+```
+
 Policy to grant readonly access to EKS clusters
 
 ```
@@ -195,9 +262,13 @@ Update the trust policy on EKS cluster to grant assume role
 	"Sid": "BackStageEKSClusterAssumeRole",
 	"Effect": "Allow",
 	"Principal": {
-		"AWS": "675980002736"
+		"AWS": "arn:aws:iam::675980002736:user/installer"
 	},
 	"Action": "sts:AssumeRole",
-	"Condition": {"StringEquals": {"sts:ExternalId": "bb02218a-9a21-4152-883d-a0fb205f4514"}}
+	"Condition": {
+		"StringEquals": {
+			"sts:ExternalId": "bb02218a-9a21-4152-883d-a0fb205f4514"
+		}
+	}
 }
 ```
