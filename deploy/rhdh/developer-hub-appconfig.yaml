@@ -26,8 +26,8 @@ data:
         - type: 'config'
           clusters:
           - url: ${EKS_CLUSTER_URL}
-            name: eks
-            authProvider: 'serviceaccount'
+            name: ${EKS_CLUSTER_NAME}
+            authProvider: 'serviceAccount'
             caData: ${EKS_CA_DATA}
             serviceAccountToken: ${EKS_SA_TOKEN}
     techdocs:
@@ -96,5 +96,3 @@ data:
               seconds: 15
             timeout:
               minutes: 3
-    permission:
-      enabled: false
