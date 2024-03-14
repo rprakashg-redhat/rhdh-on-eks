@@ -8,9 +8,8 @@ data:
     organization:
       name: Demo org
     aws:
-      mainAccount:
-        accessKeyId: ${AWS_ACCESS_KEY_ID}
-        secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
+      accountDefaults:
+        roleName: ${EKS_ROLE_ARN_TO_ASSUME}
     kubernetes:
       serviceLocatorMethod:
         type: 'multiTenant'
@@ -24,7 +23,7 @@ data:
             caData: ${EKS_CA_DATA}
             authMetadata:
               kubernetes.io/aws-assume-role: ${EKS_ROLE_ARN_TO_ASSUME}
-              #kubernetes.io/aws-external-id: ${EXTERNAL_ID} commenting this out since cluster is in the same account where backstage is running
+              kubernetes.io/aws-external-id: ${AWS_EXTERNAL_ID}
               kubernetes.io/x-k8s-aws-id: ${EKS_CLUSTER_NAME}
     techdocs:
       generator:

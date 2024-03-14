@@ -172,3 +172,32 @@ Get the control plane endpoint by running command below or from AWS console and 
 ```
 kubectl cluster-info
 ```
+
+Policy to grant readonly access to EKS clusters
+
+```
+{
+	"Version": "2012-10-17",
+	"Statement":[
+         {
+            "Effect": "Allow", 
+            "Action": "eks:DescribeCluster", 
+            "Resource": "arn:aws:eks:us-west-2:675980002736:cluster/toolscluster"
+         }
+    ]
+}
+```
+
+Update the trust policy on EKS cluster to grant assume role
+
+```
+{
+	"Sid": "BackStageEKSClusterAssumeRole",
+	"Effect": "Allow",
+	"Principal": {
+		"AWS": "675980002736"
+	},
+	"Action": "sts:AssumeRole",
+	"Condition": {"StringEquals": {"sts:ExternalId": "bb02218a-9a21-4152-883d-a0fb205f4514"}}
+}
+```
