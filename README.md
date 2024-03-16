@@ -291,3 +291,13 @@ Update the trust policy on EKS cluster to grant assume role
 	}
 }
 ```
+
+Create a GHCR image pull secret
+
+```
+kubectl create secret docker-registry ghcr-creds \
+-n demos --docker-server https://ghcr.io --docker-username=rprakashg-redhat --docker-password=${GHCR_TOKEN} \
+--docker-email=rgopinat@redhat.com
+```
+
+

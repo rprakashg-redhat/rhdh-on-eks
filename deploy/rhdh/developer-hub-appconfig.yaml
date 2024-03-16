@@ -20,13 +20,13 @@ data:
     organization:
       name: Demo org
     argocd:
+      username: ${ARGOCD_USER_ID}
+      password: ${ARGOCD_USER_PWD}
       appLocatorMethods:
       - type: 'config'
         instances:
         - name: argocd
           url: https://gitops.sandbox2841.opentlc.com
-          username: ${ARGOCD_USER_ID}
-          password: ${ARGOCD_USER_PWD}
     kubernetes:
       serviceLocatorMethod:
         type: 'multiTenant'
