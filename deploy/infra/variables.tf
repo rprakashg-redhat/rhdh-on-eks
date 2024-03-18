@@ -15,3 +15,15 @@ variable "k8sversion" {
   type = string
   default = "1.29"
 }
+
+variable "dbname" {
+  description = "Postgresql Database name"
+  type      = string
+  default = "rhdh-db"
+}
+
+variable "dbuser" {
+  description = "user name to connect to the datbase"
+  type = string
+  default = "rhdh"
+}
