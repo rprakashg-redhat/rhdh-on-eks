@@ -81,9 +81,14 @@ upstream:
         cors:
           origin: 'https://{{- include "janus-idp.hostname" . }}'
         database:
+          client: pg
           connection:
             password: ${POSTGRESQL_ADMIN_PASSWORD}
-            user: postgres
+            #password: ${AWS_RDS_POSTGRESQL_PASSWORD}
+            #user: ${AWS_RDS_POSTGRESQL_USER}
+            #host: ${AWS_RDS_POSTGRESQL_HOST}
+            #port: ${AWS_RDS_POSTGRESQL_PORT}
+            #database: ${AWS_RDS_POSTGRESQL_DB}
         auth:
           keys:
             - secret: ${BACKEND_SECRET}
@@ -116,6 +121,7 @@ upstream:
           secretKeyRef:
             key: backend-secret
             name: '{{ include "janus-idp.backend-secret-name" $ }}'
+      # Commenting to switch to AWS RDS
       - name: POSTGRESQL_ADMIN_PASSWORD
         valueFrom:
           secretKeyRef:

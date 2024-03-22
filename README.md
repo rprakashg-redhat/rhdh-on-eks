@@ -62,7 +62,7 @@ kubectl patch sa default -n tools -p '{"imagePullSecrets": [{"name": "rhdh-pull-
 Create secrets used in app config for Red Hat developer hub instance. I was playing with OKTA, GITLAB, GITHUB integrations which is why you see secrets for those below
 
 ```
- kubectl create secret generic rhdh-secrets \
+kubectl create secret generic rhdh-secrets \
   -n tools \
   --from-literal=AUTH_OKTA_CLIENT_ID=${AUTH_OKTA_CLIENT_ID} \
 --from-literal=AUTH_OKTA_CLIENT_SECRET=${AUTH_OKTA_CLIENT_SECRET} \
@@ -91,7 +91,11 @@ Create secrets used in app config for Red Hat developer hub instance. I was play
 --from-literal=AWS_EXTERNAL_ID=${AWS_EXTERNAL_ID} \
 --from-literal=EKS_SA_TOKEN=${EKS_SA_TOKEN} \
 --from-literal=ARGOCD_USER_ID=${ARGOCD_USER_ID} \
---from-literal=ARGOCD_USER_PWD=${ARGOCD_USER_PWD}
+--from-literal=ARGOCD_USER_PWD=${ARGOCD_USER_PWD} \
+--from-literal=AWS_RDS_POSTGRESQL_HOST=${AWS_RDS_POSTGRESQL_HOST} \
+--from-literal=AWS_RDS_POSTGRESQL_PORT=${AWS_RDS_POSTGRESQL_PORT} \
+--from-literal=AWS_RDS_POSTGRESQL_USER=${AWS_RDS_POSTGRESQL_USER} \
+--from-literal=AWS_RDS_POSTGRESQL_PASSWORD=${AWS_RDS_POSTGRESQL_PASSWORD}
 ```
 
 Create secret from Github private key that was downloaded when you created the app in github
@@ -177,6 +181,27 @@ Get the control plane endpoint by running command below or from AWS console and 
 kubectl cluster-info
 ```
 
+Create service account for backstage
+
+```
+kubectl create serviceaccount devhub-sa -n tools
+```
+
+Create secret for Service account token
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: devhub-sa-token
+  namespace: tools
+  annotations:
+    kubernetes.io/service-account.name: devhub-sa
+type: kubernetes.io/service-account-token
+EOF
+```
+
 Create a readonly cluster role
 ```
 cat <<EOF | kubectl apply -f -
@@ -259,38 +284,12 @@ EOF
 
 ```
 
-Policy to grant readonly access to EKS clusters
+Get SA Token
 
 ```
-{
-	"Version": "2012-10-17",
-	"Statement":[
-         {
-            "Effect": "Allow", 
-            "Action": "eks:DescribeCluster", 
-            "Resource": "arn:aws:eks:us-west-2:675980002736:cluster/toolscluster"
-         }
-    ]
-}
+kubectl get secret -n tools devhub-sa-token -o jsonpath="{.data.token}" | base64 -d | pbcopy
 ```
 
-Update the trust policy on EKS cluster to grant assume role
-
-```
-{
-	"Sid": "BackStageEKSClusterAssumeRole",
-	"Effect": "Allow",
-	"Principal": {
-		"AWS": "arn:aws:iam::675980002736:user/installer"
-	},
-	"Action": "sts:AssumeRole",
-	"Condition": {
-		"StringEquals": {
-			"sts:ExternalId": "bb02218a-9a21-4152-883d-a0fb205f4514"
-		}
-	}
-}
-```
 
 Create a GHCR image pull secret
 
