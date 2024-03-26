@@ -27,7 +27,7 @@ Install HAProxy ingress controller
 helm install haproxy-kubernetes-ingress haproxytech/kubernetes-ingress \
   --create-namespace \
   --namespace haproxy-controller \
-  --set controller.service.type=LoadBalancer
+  --set controller.service.type=LoadBalancer`
 ```
 Check if load balancer provisioned successfully in AWS. 
 
@@ -79,7 +79,7 @@ kubectl create secret generic rhdh-secrets \
 --from-literal=GITHUB_APP_WEBHOOK_URL=${GITHUB_APP_WEBHOOK_URL} \
 --from-literal=GITHUB_APP_WEBHOOK_SECRET=${GITHUB_APP_WEBHOOK_SECRET} \
 --from-literal=GITHUB_TOKEN=${GITHUB_TOKEN} \
---from-literal=BACKSTAGE_AWS_ACCOUNT_ID=${BACKSTAGE_AWS_ACCOUNT_ID} \
+--from-literal=TECHDOCS_AWS_ACCOUNT_ID=${BACKSTAGE_AWS_ACCOUNT_ID} \
 --from-literal=AWS_ACCESS_KEY_ID=${BACKSTAGE_AWS_ACCESS_KEY_ID} \
 --from-literal=AWS_SECRET_ACCESS_KEY=${BACKSTAGE_AWS_SECRET_ACCESS_KEY} \
 --from-literal=TECHDOCS_AWSS3_BUCKET_NAME=${TECHDOCS_AWSS3_BUCKET_NAME} \

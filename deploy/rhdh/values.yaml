@@ -40,7 +40,7 @@ global:
   # -- setting this to empty string since we are installing developer hub on EKS
   clusterRouterBase: ""
   # -- Custom hostname shorthand, overrides `global.clusterRouterBase`, `upstream.ingress.host`, `route.host`, and url values in `upstream.backstage.appConfig`
-  host: "devhub.sandbox2841.opentlc.com"
+  host: "devhub.sandbox2807.opentlc.com"
   # -- Enable service authentication within Backstage instance
   auth:
     # -- Backend service to service authentication
