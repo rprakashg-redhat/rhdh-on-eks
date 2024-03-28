@@ -27,7 +27,7 @@ Install HAProxy ingress controller
 helm install haproxy-kubernetes-ingress haproxytech/kubernetes-ingress \
   --create-namespace \
   --namespace haproxy-controller \
-  --set controller.service.type=LoadBalancer`
+  --set controller.service.type=LoadBalancer
 ```
 Check if load balancer provisioned successfully in AWS. 
 
@@ -95,7 +95,8 @@ kubectl create secret generic rhdh-secrets \
 --from-literal=AWS_RDS_POSTGRESQL_HOST=${AWS_RDS_POSTGRESQL_HOST} \
 --from-literal=AWS_RDS_POSTGRESQL_PORT=${AWS_RDS_POSTGRESQL_PORT} \
 --from-literal=AWS_RDS_POSTGRESQL_USER=${AWS_RDS_POSTGRESQL_USER} \
---from-literal=AWS_RDS_POSTGRESQL_PASSWORD=${AWS_RDS_POSTGRESQL_PASSWORD}
+--from-literal=AWS_RDS_POSTGRESQL_PASSWORD=${AWS_RDS_POSTGRESQL_PASSWORD} \
+--from-literal=AUTH_OKTA_SECRET=${AUTH_OKTA_SECRET}
 ```
 
 Create secret from Github private key that was downloaded when you created the app in github
