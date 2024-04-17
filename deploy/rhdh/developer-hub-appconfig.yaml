@@ -14,7 +14,7 @@ data:
       keycloak: false
       kubernetes: true
       ocm: false
-      permission: false
+      permission: true
       sonarqube: false
       techdocs: true
     organization:
@@ -94,12 +94,14 @@ data:
       import:
         entityFileName: catalog-info.yaml
       rules:
-        - allow: [Component, System, API, Resource, Location, Domain, Template]
+        - allow: [Component, System, API, Resource, Location, Domain, Template, Group, User]
       locations:
         - type: url
           target: https://github.com/rprakashg-redhat/rhdh-templates/blob/main/all-templates.yaml
         - type: url
           target: https://github.com/rprakashg-redhat/apis/blob/main/all-apis.yaml
+        - type: url
+          target: https://github.com/rprakashg-redhat/apis/blob/main/acme-corp.yaml
         #- type: github-org
         #  target: https://github.com/${GITHUB_ORG}
         #  rules:
