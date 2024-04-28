@@ -40,7 +40,5 @@ module "rds" {
     monitoring_role_description             = "Monitoring role for ${var.dbname} AWS RDS database"
     monitoring_role_use_name_prefix         = true
 
-    depends_on = [ module.vpc ]
-
     tags = local.tags
 }
