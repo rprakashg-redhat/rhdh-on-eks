@@ -1,6 +1,6 @@
 module "rds" {
     source  = "terraform-aws-modules/rds/aws"
-    version = "6.3.1"
+    version = "6.10.0"
 
     # insert the 1 required variable here
     identifier = "postgresql"

@@ -13,13 +13,13 @@ variable "name" {
 variable "k8sversion" {
   description = "Kubernetes version"
   type = string
-  default = "1.29"
+  default = "1.31"
 }
 
 variable "dbname" {
   description = "Postgresql Database name"
   type      = string
-  default = "rhdh-db"
+  default = "rhdhdb"
 }
 
 variable "dbuser" {

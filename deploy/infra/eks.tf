@@ -1,6 +1,6 @@
 module "eks" {
     source  = "terraform-aws-modules/eks/aws"
-    version = "19.21.0"
+    version = "20.28.0"
 
     cluster_name = var.name
     cluster_version = var.k8sversion
@@ -10,14 +10,16 @@ module "eks" {
 
     cluster_endpoint_public_access = true
 
-    eks_managed_node_group_defaults = {
-        ami_type = "AL2_x86_64"
-
-        attach_cluster_primary_security_group = true
-
-        # Disabling and using externally provided security groups
-        create_security_group = false
+    # EKS Addons
+    cluster_addons = {
+        aws-ebs-csi-driver      = {}
+        coredns                 = {}
+        eks-pod-identity-agent  = {}
+        kube-proxy              = {}
+        vpc-cni                 = {}
     }
+
+    enable_cluster_creator_admin_permissions = true
 
     # This is to prevent from having issues provisioning Service Type Loadbalancer
     node_security_group_tags = {
@@ -26,9 +28,9 @@ module "eks" {
 
     eks_managed_node_groups = {
         one = {
-            name = "node-group-1"
-
-            instance_types = ["m5.2xlarge"]
+            name            = "node-group-1"
+            ami_type        = "AL2_x86_64"
+            instance_types  = ["m5.2xlarge"]
 
             min_size     = 3
             max_size     = 5
@@ -38,6 +40,7 @@ module "eks" {
             echo 'foo bar'
             EOT
         }
-     }     
+     }
+       
      tags = local.tags
 }
