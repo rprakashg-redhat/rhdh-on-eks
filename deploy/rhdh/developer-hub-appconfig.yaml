@@ -6,43 +6,42 @@ metadata:
 data:
   developer-hub-appconfig.yaml: |
     enabled:
-      argocd: true
+      argocd: false
       github: true
       githubOrg: false
       gitlab: false
       jenkins: false
       keycloak: false
-      kubernetes: true
+      kubernetes: false
       ocm: false
       permission: true
       sonarqube: false
       techdocs: true
     organization:
       name: Demo org
-    argocd:
-      username: ${ARGOCD_USER_ID}
-      password: ${ARGOCD_USER_PWD}
-      appLocatorMethods:
-      - type: 'config'
-        instances:
-        - name: argocd
-          url: https://gitops.sandbox1301.opentlc.com
-    kubernetes:
-      serviceLocatorMethod:
-        type: 'multiTenant'
-      clusterLocatorMethods:
-        - type: 'config'
-          clusters:
+    #argocd:
+    #  username: ${ARGOCD_USER_ID}
+    #  password: ${ARGOCD_USER_PWD}
+    #  appLocatorMethods:
+    #  - type: 'config'
+    #    instances:
+    #    - name: argocd
+    #      url: https://gitops.sandbox1301.opentlc.com
+    #kubernetes:
+    #  serviceLocatorMethod:
+    #    type: 'multiTenant'
+    #  clusterLocatorMethods:
+    #    - type: 'config'
+    #      clusters:
           #- url: https://api.workload.sandbox2807.opentlc.com:6443
           #  name: workload 
           #  authProvider: oidc
           #  oidcTokenProvider: okta
-
-          - url: ${EKS_CLUSTER_URL}
-            name: ${EKS_CLUSTER_NAME}
-            authProvider: 'serviceAccount'
-            caData: ${EKS_CA_DATA}
-            serviceAccountToken: ${EKS_SA_TOKEN}
+    #      - url: ${EKS_CLUSTER_URL}
+    #        name: ${EKS_CLUSTER_NAME}
+    #        authProvider: 'serviceAccount'
+    #        caData: ${EKS_CA_DATA}
+    #        serviceAccountToken: ${EKS_SA_TOKEN}
     techdocs:
       generator:
         runIn: local
@@ -55,17 +54,17 @@ data:
           bucketName: ${TECHDOCS_AWSS3_BUCKET_NAME}
           endPoint: ${TECHDOCS_AWSS3_BUCKET_URL}
           bucketRootPath: '/'
-          accountId: ${TECHDOCS_AWS_ACCOUNT_ID}
+          accountId: ${AWS_ACCOUNT_ID}
           credentials:
             accessKeyId: ${AWS_ACCESS_KEY_ID}
             secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
-          region: ${AWS_REGION}
+          region: ${AWS_DEFAULT_REGION}
           s3ForcePathStyle: true
     signInPage: github
     auth:
       environment: demo
-      session:
-        secret: ${AUTH_OKTA_SECRET}
+      #session:
+      #  secret: ${AUTH_OKTA_SECRET}
       providers:
         #okta:
         #  demo:

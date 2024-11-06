@@ -12,7 +12,6 @@ module "eks" {
 
     # EKS Addons
     cluster_addons = {
-        aws-ebs-csi-driver      = {}
         coredns                 = {}
         eks-pod-identity-agent  = {}
         kube-proxy              = {}

@@ -32,7 +32,7 @@ helm install haproxy-kubernetes-ingress haproxytech/kubernetes-ingress \
 Check if load balancer provisioned successfully in AWS. 
 
 ```
-kubectl describe service haproxy-ingress -n haproxy-controller
+kubectl describe service haproxy-kubernetes-ingress -n haproxy-controller
 ```
 
 ## create namespace 
@@ -57,46 +57,29 @@ Patch the  default service account to be able to pull images from redhat registr
 kubectl patch sa default -n tools -p '{"imagePullSecrets": [{"name": "rhdh-pull-secret"}]}'
 ```
 
+## Set environment variables 
+Make sure local.env file is created and all required secrets are set in local environment variables before creating kubernetes secret
+
+```
+export $(cat local.env | xargs)
+```
+
 ## Create required secrets and app config configmap
 
 Create secrets used in app config for Red Hat developer hub instance. I was playing with OKTA, GITLAB, GITHUB integrations which is why you see secrets for those below
 
 ```
 kubectl create secret generic rhdh-secrets \
-  -n tools \
-  --from-literal=AUTH_OKTA_CLIENT_ID=${AUTH_OKTA_CLIENT_ID} \
---from-literal=AUTH_OKTA_CLIENT_SECRET=${AUTH_OKTA_CLIENT_SECRET} \
---from-literal=AUTH_OKTA_DOMAIN=${AUTH_OKTA_DOMAIN} \
---from-literal=AUTH_OKTA_ADDITIONAL_SCOPES=${AUTH_OKTA_ADDITIONAL_SCOPES} \
---from-literal=GITLAB_TOKEN=${GITLAB_TOKEN} \
---from-literal=GITLAB_APP_APP_ID=${GITLAB_APP_APP_ID} \
---from-literal=GITLAB_APP_CLIENT_ID=${GITLAB_APP_CLIENT_ID} \
---from-literal=GITLAB_APP_CLIENT_SECRET=${GITLAB_APP_CLIENT_SECRET} \
---from-literal=GITHUB_APP_APP_ID=${GITHUB_APP_APP_ID} \
+-n tools \
 --from-literal=GITHUB_APP_CLIENT_ID=${GITHUB_APP_CLIENT_ID} \
 --from-literal=GITHUB_APP_CLIENT_SECRET=${GITHUB_APP_CLIENT_SECRET} \
---from-literal=GITHUB_ORG=${GITHUB_ORG} \
---from-literal=GITHUB_APP_WEBHOOK_URL=${GITHUB_APP_WEBHOOK_URL} \
---from-literal=GITHUB_APP_WEBHOOK_SECRET=${GITHUB_APP_WEBHOOK_SECRET} \
 --from-literal=GITHUB_TOKEN=${GITHUB_TOKEN} \
---from-literal=TECHDOCS_AWS_ACCOUNT_ID=${BACKSTAGE_AWS_ACCOUNT_ID} \
---from-literal=AWS_ACCESS_KEY_ID=${BACKSTAGE_AWS_ACCESS_KEY_ID} \
---from-literal=AWS_SECRET_ACCESS_KEY=${BACKSTAGE_AWS_SECRET_ACCESS_KEY} \
 --from-literal=TECHDOCS_AWSS3_BUCKET_NAME=${TECHDOCS_AWSS3_BUCKET_NAME} \
 --from-literal=TECHDOCS_AWSS3_BUCKET_URL=${TECHDOCS_AWSS3_BUCKET_URL} \
---from-literal=AWS_REGION=${AWS_REGION} \
---from-literal=EKS_CLUSTER_URL=${EKS_CLUSTER_URL} \
---from-literal=EKS_CLUSTER_NAME=${EKS_CLUSTER_NAME} \
---from-literal=BACKSTAGE_ROLE_ARN_TO_ASSUME=${BACKSTAGE_ROLE_ARN_TO_ASSUME} \
---from-literal=AWS_EXTERNAL_ID=${AWS_EXTERNAL_ID} \
---from-literal=EKS_SA_TOKEN=${EKS_SA_TOKEN} \
---from-literal=ARGOCD_USER_ID=${ARGOCD_USER_ID} \
---from-literal=ARGOCD_USER_PWD=${ARGOCD_USER_PWD} \
---from-literal=AWS_RDS_POSTGRESQL_HOST=${AWS_RDS_POSTGRESQL_HOST} \
---from-literal=AWS_RDS_POSTGRESQL_PORT=${AWS_RDS_POSTGRESQL_PORT} \
---from-literal=AWS_RDS_POSTGRESQL_USER=${AWS_RDS_POSTGRESQL_USER} \
---from-literal=AWS_RDS_POSTGRESQL_PASSWORD=${AWS_RDS_POSTGRESQL_PASSWORD} \
---from-literal=AUTH_OKTA_SECRET=${AUTH_OKTA_SECRET}
+--from-literal=AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} \
+--from-literal=AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+--from-literal=AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+--from-literal=AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
 ```
 
 Create secret from Github private key that was downloaded when you created the app in github
@@ -130,7 +113,7 @@ Customize the values yaml. You can see version I used for EKS install here -> ht
 Install the Helm Chart
 
 ```
-helm upgrade --namespace tools -i developer-hub -f values.yaml openshift-helm-charts/redhat-developer-hub
+helm upgrade --namespace tools -i developer-hub -f deploy/rhdh/values.yaml openshift-helm-charts/redhat-developer-hub
 ```
 
 
